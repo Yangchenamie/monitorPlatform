@@ -1,16 +1,5 @@
 <template>
-    <div class="header">
-        <div class="headerTitle">
-            <img src="../../public/static/img/title.png" alt="">
-            <span class="title">烧烤大数据监控平台</span>
-        </div>
-        <div class="picAll">
-            <img src="../../public/static/img/pic2.png" alt="" srcset="">
-            <div class="smallDiv"></div>
-            <img src="../../public/static/img/pic1.png" alt="">
-            <!-- <div class="lozenge"></div> -->
-        </div>
-    </div>
+    <HeaderLogin></HeaderLogin>
     <div class="content">
         <div class="con-title">
             <ul>
@@ -38,16 +27,19 @@
         <!-- <loginPhone></loginPhone> -->
         <component :is="comId"></component>
         <a class="btnLogin">立即登录</a>
-        <div class="btnRg">注册账号</div>
+        <div class="btnRg" @click="gotoRegister('register')">注册账号</div>
     </div>
 </template>
 
 <script setup lang="ts">
 import echarts from 'echarts'
 import { shallowRef,reactive,markRaw,ref} from 'vue';
+import router from '../router';
+import HeaderLogin from './headerLogin.vue';
 import LoginEmail from './loginEmail.vue';
 import loginPhone from './loginPhone.vue'
-
+// import { useRouter } from 'vue-router';
+// const router = useRouter()
 const comId = shallowRef(LoginEmail)
 
 const active = ref(0);
@@ -68,55 +60,18 @@ const switchCom = (item,index) => {
     active.value = index
 }
 
+const gotoRegister = (url:string) =>{
+    router.push({
+        name:url
+    })
+}
 
 
 </script>
 
 <style scoped lang="less">
 
-.header {
-    margin: auto;
 
-    .headerTitle {
-        position: relative;
-
-        .title {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translateX(-50%);
-            font-size: 32px;
-            width: 100%;
-
-        }
-    }
-
-    .picAll {
-        display: flex;
-        flex-flow: column;
-        width: 16px;
-        margin: 20px auto;
-
-        >img {
-            margin: auto;
-        }
-
-        .smallDiv {
-            width: 4px;
-            height: 1px;
-            background-color: rgba(0, 218, 216, 1);
-            margin: 3px auto 16px;
-        }
-
-        // .lozenge{
-        //     width: 2px;
-        //     height: 2px;
-        //     transform: rotate(-135deg);
-        //     background-color:grey;
-        // }
-    }
-
-}
 
 .content {
     width: 424px;
@@ -201,6 +156,6 @@ const switchCom = (item,index) => {
 }
 
 .active {
-    border-bottom: 1px solid rgba(0, 218, 216, 1);
+    border-bottom: 3px solid rgba(0, 218, 216, 1);
 }
 </style>

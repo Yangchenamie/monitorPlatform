@@ -31,8 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import HeaderLogin from './headerLogin.vue';
-import LoginPage from './loginPage.vue';
+import HeaderLogin from '../components/headerLogin.vue';
 import router from '../router';
 // import {useRouter,useRoute} from 'vue-router'
 

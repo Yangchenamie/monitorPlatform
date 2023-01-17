@@ -3,17 +3,20 @@
   <!-- <Screen></Screen> -->
   <!-- <loginPage></loginPage> -->
   <!-- <HeaderLogin></HeaderLogin> -->
-  <router-view></router-view>
+  <!-- <router-view></router-view> -->
+  <ScreenPage></ScreenPage>
 </template>
 
 <script setup lang="ts">
-import loginPage from './components/loginPage.vue';
-import Screen from './components/screen.vue';
-import HeaderLogin from './components/register.vue';
+
+
 import router from './router';
+import ScreenPage from './view/ScreenPage.vue';
 
 </script>
 
 <style scoped>
-
+html,body,#app{
+  width: 100%;
+}
 </style>

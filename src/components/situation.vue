@@ -1,11 +1,12 @@
 <template>
-    <div>111</div>
+    <h4>今日情况</h4>
 </template>
+
 
 <script setup lang="ts">
 
 </script>
 
-<style>
+<style scoped lang="less">
 
 </style>

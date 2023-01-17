@@ -35,9 +35,9 @@
 import echarts from 'echarts'
 import { shallowRef,reactive,markRaw,ref} from 'vue';
 import router from '../router';
-import HeaderLogin from './headerLogin.vue';
-import LoginEmail from './loginEmail.vue';
-import loginPhone from './loginPhone.vue'
+import HeaderLogin from '../components/headerLogin.vue';
+import LoginEmail from '../components/loginEmail.vue';
+import loginPhone from '../components/loginPhone.vue'
 // import { useRouter } from 'vue-router';
 // const router = useRouter()
 const comId = shallowRef(LoginEmail)
@@ -70,8 +70,6 @@ const gotoRegister = (url:string) =>{
 </script>
 
 <style scoped lang="less">
-
-
 
 .content {
     width: 424px;

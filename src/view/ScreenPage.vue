@@ -7,11 +7,13 @@
         
     </div>
     <Map></Map>
+    <Situation></Situation>
 </template>
 
 <script setup lang="ts">
 
 import Map from '../components/map.vue';
+import Situation from '../components/situation.vue';
 
 
 </script>

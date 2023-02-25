@@ -133,7 +133,7 @@ onMounted(() => {
         legend: {
             top: '83%',
             icon: 'circle',
-            left: 290,
+            right: '12%',
             // z: 2,
             orient: "vertical",
             // data: legendArr
@@ -247,12 +247,17 @@ onMounted(() => {
 
 
     chart.setOption(option, true)
+
+    window.addEventListener('resize', function () {//执行
+        chart.resize();
+    })
 })
 </script>
 
 <style scoped lang="less">
 .container {
     width: 100%;
+    min-width: 420px;
     // margin-bottom: 30px;
     margin: auto;
 
@@ -288,6 +293,7 @@ onMounted(() => {
     }
 
     .content {
+        width: 100%;
         position: relative;
 
         #online {
@@ -296,19 +302,23 @@ onMounted(() => {
         }
 
         .statistics {
+            width: 60%;
             position: absolute;
             display: flex;
             bottom: 0px;
             margin-left: 5px;
+            justify-content: space-around;
+            min-width: 251px;
 
             >div {
                 // padding-top: 10px;
-                width: 118px;
-                height: 61px;
-                background: url('../../public/static/img/pic3.png');
+                min-width: 118px;
+                // height: 61px;
+                flex: 1;
+                background: url('../../public/static/img/pic3.png') no-repeat center;
                 box-sizing: border-box;
                 padding-top: 8px;
-                margin-right: 20px;
+                // margin-right: 5px;
 
                 p {
                     margin: 0;

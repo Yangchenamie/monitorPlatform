@@ -39,8 +39,8 @@ onMounted(() => {
                 y: 'center',
                 textStyle: {
                     rich: {
-                        v: { fontSize: 16, color: 'rgba(0, 224, 219, 1)' },
-                        t: { fontSize: 10, color: '#fff' }
+                        v: { fontSize: 18, color: 'rgba(0, 224, 219, 1)' },
+                        t: { fontSize: 12, color: '#fff' }
                     }
                 }
             },
@@ -277,7 +277,7 @@ onMounted(() => {
                         // length: 39,
                         length: '24%',
                         lineStyle: {
-                            width: 10,
+                            width: 12,
                             color: '#002837'
                         }
                     },
@@ -318,6 +318,13 @@ onMounted(() => {
         chart5.clear()
         chart5.setOption(option5, true);
     }, 100)
+    window.addEventListener('resize', function () {//执行
+        chart1.resize();
+        chart2.resize();
+        chart3.resize();
+        chart4.resize();
+        chart5.resize();
+    })
 })
 
 </script>
@@ -326,6 +333,7 @@ onMounted(() => {
 .container {
     width: 100%;
     margin: auto;
+    min-width: 320px;
 
     .header {
         // width: 650px;
@@ -363,8 +371,10 @@ onMounted(() => {
 
         // margin: auto;
         >div {
-            width: 130px;
-            height: 130px;
+            // width: 130px;
+            flex: 1;
+            height: 180px;
+            flex-wrap: wrap;
         }
 
     }

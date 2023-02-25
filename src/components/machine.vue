@@ -189,6 +189,9 @@ onMounted(() => {
         ],
         series: seriesData
     })
+    window.addEventListener('resize', function () {//执行
+        chart.resize();
+    })
 })
 </script>
 
@@ -196,6 +199,7 @@ onMounted(() => {
 .container {
     width: 100%;
     margin-bottom: 30px;
+    min-width: 320px;
 
     .header {
         // width: 650px;

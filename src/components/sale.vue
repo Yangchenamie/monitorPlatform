@@ -145,7 +145,7 @@ onMounted(() => {
             // color:"rgba(0, 224, 219, 1)",
             top: '70%',
             icon: 'circle',
-            left: 250,
+            right:'12%',
             // z: 2,
             orient: "vertical",
             // data: legendArr
@@ -364,6 +364,9 @@ onMounted(() => {
             }
         ]
     })
+    window.addEventListener('resize', function () {//执行
+        chart.resize();
+    })
 
 
 })
@@ -372,6 +375,7 @@ onMounted(() => {
 <style scoped lang="less">
 .container {
     width: 100%;
+    min-width: 420px;
     // margin: auto;
     // margin-top: 30px;
 
@@ -408,6 +412,7 @@ onMounted(() => {
     }
 
     .content {
+        width: 100%;
         position: relative;
 
         #sale {
@@ -420,11 +425,12 @@ onMounted(() => {
             bottom: -20px;
             display: flex;
             margin-top: 20px;
-            margin-left: 30px;
+            padding-left: 30px;
+            width: 60%;
 
             >div {
-                margin-right: 25px;
-
+                // margin-right: 25px;
+                flex:1;
                 p {
                     font-size: 14px;
                     margin: 0;

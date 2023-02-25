@@ -46,7 +46,7 @@
 <style scoped lang="less">
 .container {
     width: 100%;
-
+    min-width: 320px;
 
     .header {
         // width: 650px;
@@ -82,9 +82,9 @@
 
         >table {
             border-collapse: collapse;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
+            width: 90%;
+            // display: flex;
+            // justify-content: space-between;
 
             th {
                 color: rgba(0, 218, 216, 1);
@@ -94,6 +94,7 @@
                 line-height: 60px;
                 margin: 0 30px;
                 padding-right: 20px;
+                flex:1;
             }
 
             td {

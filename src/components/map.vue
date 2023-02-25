@@ -1,6 +1,8 @@
 <template>
   <!-- <h4>map</h4> -->
-  <div id="china"></div>
+  <div class="content">
+    <div id="china"></div>
+  </div>
 </template>
 
 
@@ -175,13 +177,13 @@ onMounted(() => {
           // color: "#fff",
           position: 'right',
           fontSize: 12,
-          width:89,
-          height:35,
+          width: 89,
+          height: 35,
           // offset:[20,0],
           // align:"center",
-          padding:[0,0,0,7],
-          color:"rgba(255, 140, 26, 1)",
-          backgroundColor:"rgba(204, 204, 204, 1)",
+          padding: [0, 0, 0, 7],
+          color: "rgba(255, 140, 26, 1)",
+          backgroundColor: "rgba(204, 204, 204, 1)",
           formatter(value: any) {
             return value.data.list;
           },
@@ -200,13 +202,27 @@ onMounted(() => {
       },
     ],
   });
+  window.addEventListener('resize', function () {//执行
+        chart.resize();
+    })
 })
 </script>
 
 <style scoped lang="less">
-#china {
+.content {
   width: 100%;
-  height: 500px;
-  margin: auto;
+  min-width: 500px;
+
+  #china {
+    // width: 100%;
+    height: 500px;
+    margin: auto;
+    min-width: 500px;
+
+    div {
+      width: 100%;
+      min-width: 500px;
+    }
+  }
 }
 </style>

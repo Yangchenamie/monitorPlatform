@@ -45,15 +45,19 @@ import Sale from '../components/sale.vue';
 import Situation from '../components/situation.vue';
 
 
+
 </script>
 
 <style scoped lang="less">
 body {
   width: 100%;
-
 }
 
 .header {
+  display: flex;
+  top: 0;
+  left: 0;
+  justify-content: space-around;
   .headerTitle {
     position: relative;
 
@@ -96,8 +100,9 @@ body {
 
   .screen-left {
     height: 100%;
-    width: 26%;
-    margin-left: 1%;
+    width: 27%;
+    padding-left: 20px;
+    min-width: 420px;
 
     .left-top {
       // position: relative;
@@ -112,17 +117,17 @@ body {
     }
   }
 
-  .screen-middle {
+  .sreen-center {
     height: 100%;
-    width: 45%;
-    margin-left: 1.6%;
-    margin-right: 1.6%;
+    width: 46%;
+    min-width: 500px;
+    margin: 0 20px;
 
     .center-top {
       // position: relative;
       width: 100%;
       height: 56%;
-      background-color: yellow;
+      // background-color: yellow;
     }
 
     .center-bottom {
@@ -137,6 +142,7 @@ body {
   .screen-right {
     height: 100%;
     width: 27%;
+    min-width: 320px;
 
     // margin-left: 0.5%;
     .right-top {

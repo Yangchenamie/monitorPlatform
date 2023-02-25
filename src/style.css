@@ -26,12 +26,14 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+  /* display: flex;
+  place-items: center; */
+  min-width: 1300px;
   min-height: 100vh;
   background: url('/public/static/img/bg.png') no-repeat;
   background-size: cover;
+  height: 100%;
+  width: 100%;
 }
 
 h1 {
@@ -63,8 +65,8 @@ button:focus-visible {
 }
 
 #app {
-  max-width: 1980px;
-  margin: 0 auto;
+  /* max-width: 1980px; */
+  /* margin: 0 auto; */
   /* padding: 2rem; */
   padding: 0;
   text-align: center;

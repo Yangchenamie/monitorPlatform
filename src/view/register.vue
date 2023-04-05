@@ -9,44 +9,70 @@
             <div class="divfr" style="right: -4px;"></div>
         </div>
         <div class="conInput">
-            <input type="text" placeholder="手机号">
-            <input type="text" placeholder="Email">
-            <input type="text" placeholder="密码">
-            <input type="text" placeholder="验证码">
-            <button class="getBtn">获取</button>
+            <input type="text" placeholder="手机号" v-model="msg.phone">
+            <input type="text" placeholder="昵称" v-model="msg.nickName">
+            <input type="password" placeholder="密码" v-model="msg.password">
+            <input type="text" placeholder="验证码" v-model="msg.captcha">
+            <button class="getBtn" @click="sendMsg(msg.phone)">获取</button>
             <div class="conFoot">
                 <div>
                     <input type="checkbox" name="" id="">
                     <span>自动登录</span>
                 </div>
             </div>
-            <a class="btnLogin">立即注册</a>
+            <a class="btnLogin" @click="gotoReg">立即注册</a>
             <p>注册即表示您已阅读并同意《隐私政策》和《用户协议》</p>
             <!-- <p>已有账号？ <router-link class="gotoLogin" to="/loginPage" >立即登录</router-link></p> -->
-            <p>已有账号？ <span class="gotoLogin" @click="gotoLogin('loginPage')" >立即登录</span></p>
+            <p>已有账号？ <span class="gotoLogin" @click="gotoLogin('loginPage')">立即登录</span></p>
             <!-- <router-view></router-view> -->
         </div>
     </div>
-
 </template>
 
 <script setup lang="ts">
+import { reactive, getCurrentInstance, ComponentInternalInstance } from 'vue';
 import HeaderLogin from '../components/headerLogin.vue';
 import router from '../router';
-// import {useRouter,useRoute} from 'vue-router'
+const { proxy } = getCurrentInstance() as ComponentInternalInstance
 
-// const route = useRoute()
+interface data {
+    phone: string,
+    nickName: string,
+    password: string,
+    captcha: string
+}
 
-// const router = useRouter()
-// const gotoLogin = ()=>{
-//     router.push({
-//         path:'/loginPage',
-//         name:'loginPage'
-//     })
-// }
-const gotoLogin = (url:string)=>{
+const msg: data = reactive({
+    phone: '',
+    nickName: '',
+    password: '',
+    captcha: ''
+})
+const gotoLogin = (url: string) => {
     router.push({
-        name:url
+        name: url
+    })
+}
+const gotoReg = async () => {
+    const res = await proxy?.$http({
+        url: "/manage/member/add",
+        data: {
+            username:msg.nickName,
+            password:msg.password,
+            mobile:msg.phone,
+            code:msg.captcha
+        },
+        method:'POST'
+    })
+    console.log(res?.data.code);
+    if(res?.data.code==200){
+        gotoLogin('loginPage')
+    }
+}
+
+const sendMsg = async (phone: string) => {
+    const msg = await proxy?.$http({
+        url: `/edumsm/msm/send/${phone}`
     })
 }
 
@@ -155,10 +181,10 @@ const gotoLogin = (url:string)=>{
         font-size: 14px;
     }
 
-     p{
+    p {
         font-size: 14px;
 
-        .gotoLogin{
+        .gotoLogin {
             color: rgba(240, 78, 63, 1);
         }
     }

@@ -10,18 +10,13 @@
             <div id="sale"></div>
             <div class="statistics">
                 <div>
-                    <p>4.88%</p>
+                    <p>{{ saleMap.orderPrice }}</p>
                     <span>销售额</span>
                     <img src="../../public/static/img/pic4.png" alt="">
                 </div>
                 <div>
-                    <p>2.32%</p>
-                    <span>订单数</span>
-                    <img src="../../public/static/img/pic5.png" alt="">
-                </div>
-                <div>
-                    <p>1.20%</p>
-                    <span>投诉量</span>
+                    <p>{{ saleMap.orderNumber }}</p>
+                    <span>销售量</span>
                     <img src="../../public/static/img/pic6.png" alt="">
                 </div>
             </div>
@@ -32,102 +27,38 @@
 
 <script setup lang="ts">
 import * as echarts from 'echarts'
-import { onMounted } from 'vue';
-
-let dataArr = [
-    {
-        name: '销售额/万元',
-        list: [
-            {
-                name: '3月',
-                value: 5
-            },
-            {
-                name: '4月',
-                value: 4
-            },
-            {
-                name: '5月',
-                value: 3
-            },
-            {
-                name: '6月',
-                value: 5
-            },
-            {
-                name: '7月',
-                value: 4
-            },
-            {
-                name: '8月',
-                value: 3
-            }
-        ]
-    },
-    {
-        name: '订单数/万单',
-        list: [
-            {
-                name: '3月',
-                value: 4
-            },
-            {
-                name: '4月',
-                value: 6
-            },
-            {
-                name: '5月',
-                value: 2
-            },
-            {
-                name: '6月',
-                value: 5.5
-            },
-            {
-                name: '7月',
-                value: 5
-            },
-            {
-                name: '8月',
-                value: 3
-            }
-        ]
-    },
-    {
-        name: '投诉量/次',
-        list: [
-            {
-                name: '3月',
-                value: 0
-            },
-            {
-                name: '4月',
-                value: 0
-            },
-            {
-                name: '5月',
-                value: 1
-            },
-            {
-                name: '6月',
-                value: 0
-            },
-            {
-                name: '7月',
-                value: 1
-            },
-            {
-                name: '8月',
-                value: 1
-            }
-        ]
-    }
-]
-// x轴
-let nameArr = dataArr[0].list.map(it => it.name)
-onMounted(() => {
+import { onMounted,getCurrentInstance,ComponentInternalInstance,reactive } 
+from 'vue';
+const {proxy} = getCurrentInstance() as ComponentInternalInstance
+const saleMap = reactive({
+    orderNumber:"",
+    orderPrice:""
+})
+async function getSaleMap() {
+    const saleDate = await proxy?.$http({
+        url:"/shop/order/getM"
+    })
+    console.log('saleDate',saleDate);
+    saleMap.orderNumber = saleDate?.data.data.map.orderNumber;
+    saleMap.orderPrice = saleDate?.data.data.map.orderPrice;
+ }
+async function getSaleList() {
+    const saleData = await proxy?.$http({
+        url:"/shop/order/orderP"
+    })
+    console.log('saleData',saleData);
+    const saleList = saleData?.data.data.map
+    return saleList;
+}
+onMounted(async() => {
+    getSaleMap()
+    const saleList  = await getSaleList()
     const chart = echarts.init(document.querySelector('#sale') as HTMLElement)
-
+// x轴
+let xData = saleList.tx
+// y轴
+let yData1 = saleList.pty
+let yData2 = saleList.oty
     chart.setOption({
         // backgroundColor: '#021B6C',
         title: {
@@ -143,9 +74,9 @@ onMounted(() => {
         },
         legend: {
             // color:"rgba(0, 224, 219, 1)",
-            top: '70%',
+            top: '80%',
             icon: 'circle',
-            right:'12%',
+            right:'20%',
             // z: 2,
             orient: "vertical",
             // data: legendArr
@@ -153,7 +84,6 @@ onMounted(() => {
                 color: "#FFF"
             }
         },
-        color: ["rgba(0, 224, 219, 1)", "rgba(211, 22, 50, 1)", "rgba(247, 181, 0, 1)"],
         tooltip: {
             trigger: 'axis',
             // formatter: '{b}：{c}个',
@@ -202,7 +132,7 @@ onMounted(() => {
             splitLine: {
                 show: false
             },
-            data: nameArr,
+            data: xData,
             // boundaryGap: ['10%', '10%']
 
         }],
@@ -244,7 +174,7 @@ onMounted(() => {
         series: [
             {
                 // color:"rgba(0, 218, 216, 1)",
-                name: dataArr[0].name,
+                name: "销售额/元",
                 type: 'line',
                 // smooth: true, //是否平滑
                 showAllSymbol: true,
@@ -280,11 +210,11 @@ onMounted(() => {
                 tooltip: {
                     show: true
                 },
-                data: dataArr[0].list.map(it => it.value)
+                data: yData1
             },
             {
                 // color:"rgba(0, 218, 216, 1)",
-                name: dataArr[1].name,
+                name: "销售量",
                 type: 'line',
                 // smooth: true, //是否平滑
                 showAllSymbol: true,
@@ -320,47 +250,7 @@ onMounted(() => {
                 tooltip: {
                     show: true
                 },
-                data: dataArr[1].list.map(it => it.value)
-            },
-            {
-                // color:"rgba(0, 218, 216, 1)",
-                name: dataArr[2].name,
-                type: 'line',
-                // smooth: true, //是否平滑
-                showAllSymbol: true,
-                // symbol: 'image://./static/images/guang-circle.png',
-                symbol: 'circle',
-                symbolSize: 6,
-                lineStyle: {
-                    normal: {
-                        color: "rgba(247, 181, 0, 1)",
-                        shadowColor: 'rgba(247, 181, 0, 1)',
-                        shadowBlur: 10,
-                        // shadowOffsetY:5,
-                        // shadowOffsetX: 5,
-                    },
-                },
-                label: {
-                    show: false,
-                    position: 'top',
-                    textStyle: {
-                        color: 'rgba(1, 251, 246, 1)',
-                        fontSize: 16
-                    }
-                },
-                itemStyle: {
-                    color: "rgba(247, 181, 0, 1)",
-                    borderColor: "#fff",
-                    borderWidth: 2,
-                    shadowColor: 'rgba(247, 181, 0, 1)',
-                    shadowBlur: 20,
-                    // shadowOffsetY: 1,
-                    // shadowOffsetX: 1,
-                },
-                tooltip: {
-                    show: true
-                },
-                data: dataArr[2].list.map(it => it.value)
+                data: yData2
             }
         ]
     })
@@ -376,8 +266,6 @@ onMounted(() => {
 .container {
     width: 100%;
     min-width: 420px;
-    // margin: auto;
-    // margin-top: 30px;
 
     .header {
         // width: 650px;
@@ -426,7 +314,7 @@ onMounted(() => {
             display: flex;
             margin-top: 20px;
             padding-left: 30px;
-            width: 60%;
+            width: 50%;
 
             >div {
                 // margin-right: 25px;

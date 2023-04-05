@@ -4,73 +4,112 @@
         <div class="con-title">
             <ul>
                 <div></div>
-                <li :class="[active == index ? 'active': '']" v-for="(item,index) in data" @click="switchCom(item,index)">
+                <li :class="[active == index ? 'active' : '']" v-for="(item, index) in data"
+                    @click="switchCom(item, index)">
                     {{ item.name }}
                 </li>
-                
+
                 <div class="divfr"></div>
                 <div class="divfr" style="right: -4px;"></div>
             </ul>
         </div>
-        <!-- <div class="conInput">
-            <input type="text" placeholder="Email">
-            <input type="text" placeholder="密码">
-            <div class="conFoot">
-                <div>
-                    <input type="checkbox" name="" id="">
-                    <span>自动登录</span>
-                </div>
-                <a href="">忘记密码</a>
-            </div>
-        </div> -->
-        <!-- <LoginEmail></LoginEmail> -->
-        <!-- <loginPhone></loginPhone> -->
-        <component :is="comId"></component>
-        <a class="btnLogin">立即登录</a>
+        <component :is="comId" @getNamePwd="getNamePwd"></component>
+        <a class="btnLogin" @click="loginName">立即登录</a>
         <div class="btnRg" @click="gotoRegister('register')">注册账号</div>
     </div>
 </template>
 
 <script setup lang="ts">
-import echarts from 'echarts'
-import { shallowRef,reactive,markRaw,ref} from 'vue';
+import { shallowRef, reactive, markRaw, ref, getCurrentInstance, ComponentInternalInstance } from 'vue';
 import router from '../router';
 import HeaderLogin from '../components/headerLogin.vue';
 import LoginEmail from '../components/loginEmail.vue';
 import loginPhone from '../components/loginPhone.vue'
-// import { useRouter } from 'vue-router';
-// const router = useRouter()
+const { proxy } = getCurrentInstance() as ComponentInternalInstance
 const comId = shallowRef(LoginEmail)
 
 const active = ref(0);
-
+const namePwd = reactive({
+    nickName: '',
+    pwd: ''
+})
+const phoneCaptcha = reactive({
+    phone: '',
+    captcha: ''
+})
 const data = reactive([
     {
-        name:"账号密码登录",
-        com:markRaw(LoginEmail)
+        name: "账号密码登录",
+        com: markRaw(LoginEmail)
     },
     {
-        name:"手机登录",
-        com:markRaw(loginPhone)
+        name: "手机登录",
+        com: markRaw(loginPhone)
     }
 ])
+let flag: boolean = true
 
-const switchCom = (item,index) => {
+function getNamePwd(val: any) {
+    console.log('------', JSON.parse(JSON.stringify(val)));
+    if (val.nickName) {
+        namePwd.nickName = val.nickName
+        namePwd.pwd = val.pwd
+        console.log(namePwd);
+    }
+    if (val.phone) {
+        flag = false
+        phoneCaptcha.phone = val.phone
+        phoneCaptcha.captcha = val.captcha
+    }
+
+}
+
+
+
+const sendMsg = async (phone: string) => {
+    const msg = await proxy?.$http({
+        url: `/edumsm/msm/send/${phone}`
+    })
+}
+
+const loginName = async () => {
+    let res: any;
+    if (flag) {
+        res = await proxy?.$http({
+            url: "/manage/member/login",
+            data: {
+                username: namePwd.nickName,
+                password: namePwd.pwd
+            },
+            method: 'POST'
+        })
+    } else res= sendMsg(phoneCaptcha.phone)
+    console.log('res', res);
+    if (res?.data.code == 200) {
+        gotoScreenPage('screenPage')
+    }
+
+}
+
+const switchCom = (item: any, index: number) => {
     comId.value = item.com
     active.value = index
 }
 
-const gotoRegister = (url:string) =>{
+const gotoRegister = (url: string) => {
     router.push({
-        name:url
+        name: url
     })
 }
-
+const gotoScreenPage = (url: string) => {
+    router.push({
+        name: url
+    })
+}
 
 </script>
 
 <style scoped lang="less">
-
 .content {
     width: 424px;
     margin: auto;
@@ -107,37 +146,6 @@ const gotoRegister = (url:string) =>{
 
     }
 
-    // .conInput {
-    //     >input {
-    //         width: 425px;
-    //         height: 40px;
-    //         border: 1px solid rgba(220, 223, 230, 1);
-    //         padding: 0;
-    //         padding-left: 74px;
-    //         box-sizing: border-box;
-    //         border-radius: 4px;
-    //         margin: 25px 0;
-    //     }
-
-    //     .conFoot {
-    //         margin-top: 42px;
-    //         display: flex;
-    //         justify-content: space-between;
-    //         align-items: center;
-
-    //         >a {
-    //             color: #fff;
-    //             font-size: 14px;
-    //         }
-
-    //         >div>input {
-    //             width: 16px;
-    //             height: 16px;
-    //             margin-right: 8px;
-    //         }
-    //     }
-    // }
-
     .btnLogin {
         display: block;
         width: 240px;
@@ -147,7 +155,8 @@ const gotoRegister = (url:string) =>{
         color: #fff;
         border: 1px solid rgba(255, 255, 255, 1);
     }
-    .btnRg{
+
+    .btnRg {
         float: right;
         font-size: 14px;
     }

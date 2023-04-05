@@ -1,7 +1,7 @@
 <template>
     <div class="conInput">
-        <input type="text" placeholder="Email">
-        <input type="text" placeholder="密码">
+        <input type="text" placeholder="Email" v-model="namePwd.nickName">
+        <input type="password" placeholder="密码" v-model="namePwd.pwd">
         <div class="conFoot">
             <div>
                 <input type="checkbox" name="" id="">
@@ -13,7 +13,20 @@
 </template>
 
 <script setup lang="ts">
+import { reactive,watch,defineEmits } from 'vue';
 
+
+const namePwd = reactive({
+    nickName:'',
+    pwd:''
+})
+
+const emits = defineEmits(['getNamePwd'])
+
+watch(namePwd,()=>{
+    console.log(namePwd);
+    emits("getNamePwd",namePwd)
+})
 </script>
 
 <style scoped lang="less">
@@ -24,7 +37,7 @@
         border: 1px solid rgba(220, 223, 230, 1);
         padding: 0;
         padding-left: 74px;
-        padding-right: 140px;
+        padding-right: 100px;
         box-sizing: border-box;
         border-radius: 4px;
         margin: 25px 0;

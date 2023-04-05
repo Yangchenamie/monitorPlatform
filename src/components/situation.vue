@@ -18,18 +18,76 @@
 
 <script setup lang="ts">
 import * as echarts from 'echarts'
-import { onMounted } from 'vue';
+import moment from 'moment';
+import { onMounted, getCurrentInstance, ComponentInternalInstance } from 'vue';
+const { proxy } = getCurrentInstance() as ComponentInternalInstance
 
 let angle = 0; // 角度
 // let dataValue = 58;
+interface situationData {
+    machineNum: number,
+    saleNum: number,
+    videoNum: number,
+    onlineNum: number,
+    incomeNum: number
+}
 
-onMounted(() => {
+
+async function getData(): Promise<situationData> {
+    const date = moment(new Date()).format("YYYY-MM-DD");
+    // console.log(date);
+    // 装载数量
+    const machine = await proxy?.$http({
+        url: "/driver/member/getDay"
+    })
+    console.log(machine);
+    const machineNum = machine?.data.data.number
+
+    // 查看某天的销售量
+    const sale = await proxy?.$http({
+        url: `/shop/order/selectDay/${date}`
+    })
+    const saleNum = sale?.data.data.map.number
+    console.log('sale',sale);
+
+    // 查看今天的广告播放量
+    const video = await proxy?.$http({
+        url: "/shop/videoCount/day"
+    })
+    const videoNum = video?.data.data.map.number
+    console.log('video',video);
+    
+
+    // 某天的在线量
+    const online = await proxy?.$http({
+        url: `/shop/count/getDay/${date}`,
+    })
+    const onlineNum = online?.data.data.map.number
+    console.log('online',online);
+    
+    // 今天的收益额
+    const income = await proxy?.$http({
+        url: `/shop/order/selectM/${date}`
+    })
+    const incomeNum = income?.data.data.map.number
+    console.log('income',incomeNum);
+    
+    return {
+        machineNum, saleNum,videoNum, onlineNum, incomeNum
+    }
+}
+
+onMounted(async () => {
+    const datas =await getData()
+
+    console.log(datas);
+
     const chart1 = echarts.init(document.querySelector('.situation1') as HTMLElement)
     const chart2 = echarts.init(document.querySelector('.situation2') as HTMLElement)
     const chart3 = echarts.init(document.querySelector('.situation3') as HTMLElement)
     const chart4 = echarts.init(document.querySelector('.situation4') as HTMLElement)
     const chart5 = echarts.init(document.querySelector('.situation5') as HTMLElement)
-    const optionFun = (dataValue: string, text: string) => {
+    const optionFun = (dataValue: number | string, text: string) => {
         const option = {
 
             // backgroundColor: '#002837',
@@ -49,7 +107,7 @@ onMounted(() => {
                 {
                     type: 'custom',
                     coordinateSystem: 'none',
-                    renderItem: (params, api) => {
+                    renderItem: (params: any, api: { getWidth: () => number; getHeight: () => number; }) => {
                         return {
                             type: 'arc',
                             shape: {
@@ -73,7 +131,7 @@ onMounted(() => {
                 {
                     type: 'custom',
                     coordinateSystem: 'none',
-                    renderItem: (params, api) => {
+                    renderItem: (params: any, api: { getWidth: () => number; getHeight: () => number; }) => {
                         return {
                             type: 'arc',
                             shape: {
@@ -97,7 +155,7 @@ onMounted(() => {
                 {
                     type: 'custom',
                     coordinateSystem: 'none',
-                    renderItem: (params, api) => {
+                    renderItem: (params: any, api: { getWidth: () => number; getHeight: () => number; }) => {
                         return {
                             type: 'arc',
                             shape: {
@@ -121,7 +179,7 @@ onMounted(() => {
                 {
                     type: 'custom',
                     coordinateSystem: 'none',
-                    renderItem: (params, api) => {
+                    renderItem: (params: any, api: { getWidth: () => number; getHeight: () => number; }) => {
                         return {
                             type: 'arc',
                             shape: {
@@ -145,7 +203,7 @@ onMounted(() => {
                 {
                     type: 'custom',
                     coordinateSystem: 'none',
-                    renderItem: (params, api) => {
+                    renderItem: (params: any, api: { getWidth: () => number; getHeight: () => number; }) => {
                         let x0 = api.getWidth() / 2;
                         let y0 = api.getHeight() / 2;
                         let r = Math.min(api.getWidth(), api.getHeight()) / 2 * 0.66;
@@ -170,7 +228,7 @@ onMounted(() => {
                 {
                     type: 'custom',
                     coordinateSystem: 'none',
-                    renderItem: (params, api) => {
+                    renderItem: (params: any, api: { getWidth: () => number; getHeight: () => number; }) => {
                         let x0 = api.getWidth() / 2;
                         let y0 = api.getHeight() / 2;
                         let r = Math.min(api.getWidth(), api.getHeight()) / 2 * 0.66;
@@ -215,7 +273,7 @@ onMounted(() => {
                 {
                     type: 'custom',
                     coordinateSystem: 'none',
-                    renderItem: (params, api) => {
+                    renderItem: (params: any, api: { getWidth: () => number; getHeight: () => number; }) => {
                         return {
                             type: 'circle',
                             shape: {
@@ -288,11 +346,11 @@ onMounted(() => {
         }
         return option
     }
-    const option1 = optionFun("58", "装机数量")
-    const option2 = optionFun("3.5k", "销售数量")
-    const option3 = optionFun("3w", "广告播放量")
-    const option4 = optionFun("7k", "在线数量")
-    const option5 = optionFun("3w", "收益额")
+    const option1 = optionFun(datas.machineNum, "装机数量")
+    const option2 = optionFun(datas.saleNum, "销售数量")
+    const option3 = optionFun(datas.videoNum, "广告播放量")
+    const option4 = optionFun(datas.onlineNum, "在线数量")
+    const option5 = optionFun(datas.incomeNum, "收益额")
     setInterval(() => {
         angle = angle + 2;
         chart1.clear()

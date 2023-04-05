@@ -2,7 +2,7 @@
     <div class="container">
         <div class="header">
             <div></div>
-            <span>在线情况</span>
+            <span>广告播放量</span>
             <div class="divfr"></div>
             <div class="divfr" style="right: -4px;"></div>
         </div>
@@ -10,12 +10,12 @@
             <div id="online"></div>
             <div class="statistics">
                 <div>
-                    <p>67</p>
-                    <span>实时在线数量</span>
+                    <p>{{ data.num }}</p>
+                    <span>本月视频播放量</span>
                 </div>
                 <div>
-                    <p>12.40%</p>
-                    <span>平均在线率</span>
+                    <p>{{ data.compare }}</p>
+                    <span>较上个月</span>
                 </div>
             </div>
         </div>
@@ -25,9 +25,31 @@
 
 <script setup lang="ts">
 import * as echarts from 'echarts'
-import { onMounted } from 'vue';
+import { onMounted,getCurrentInstance,ComponentInternalInstance,ref, reactive } from 'vue';
+const {proxy} = getCurrentInstance() as ComponentInternalInstance
+async function getAdsList() {
+    const adsData = await proxy?.$http({
+        url:"/shop/videoCount/getP"
+    })
+    console.log('广告图',adsData);
+    const adsList = adsData?.data.data.map
+    console.log(adsList);
+    
+    data.num = adsList.cty[adsList.cty.length - 1];
+    const lastNum =adsList.cty[adsList.cty.length - 2];
+    const com = ((data.num - lastNum )/ lastNum * 100).toFixed(1)
+    data.compare = com+"%"
+    console.log('num',data.num);
+    return adsList;
+}
 
-onMounted(() => {
+let data=reactive({
+    num:0,
+    compare:''
+});
+
+onMounted(async() => {
+    const adsList=await getAdsList()
     const chart = echarts.init(document.querySelector('#online') as HTMLElement)
 
 
@@ -44,70 +66,12 @@ onMounted(() => {
         'rgba(40, 75, 144, 0)',
 
     ]
-    // let name = '单位：万'
-    let dataArr = [
-        {
-            name: '在线率',
-            list: [
-                {
-                    name: '3月',
-                    value: 40
-                },
-                {
-                    name: '4月',
-                    value: 60
-                },
-                {
-                    name: '5月',
-                    value: 20
-                },
-                {
-                    name: '6月',
-                    value: 85
-                },
-                {
-                    name: '7月',
-                    value: 50
-                },
-                {
-                    name: '8月',
-                    value: 30
-                }
-            ]
-        },
-        {
-            name: '离线率',
-            list: [
-                {
-                    name: '3月',
-                    value: 50
-                },
-                {
-                    name: '4月',
-                    value: 40
-                },
-                {
-                    name: '5月',
-                    value: 30
-                },
-                {
-                    name: '6月',
-                    value: 50
-                },
-                {
-                    name: '7月',
-                    value: 40
-                },
-                {
-                    name: '8月',
-                    value: 30
-                }
-            ]
-        }
-    ]
+   
     // x轴
-    let nameArr = dataArr[0].list.map(it => it.name)
-
+    let nameArr =adsList.tx
+    let ydata1 =adsList.cty
+    let ydata2 =adsList.ttx   
+    
     const option = {
         grid: {
             // top: '35%',
@@ -204,7 +168,7 @@ onMounted(() => {
         series: [
             {
                 type: 'line',
-                name: dataArr[0].name,
+                name: "广告数量",
                 smooth: true,
                 symbol: "none",
                 areaStyle: {
@@ -219,11 +183,11 @@ onMounted(() => {
                         }
                     ])
                 },
-                data: dataArr[0].list.map(it => it.value),
+                data: ydata1,
             },
             {
                 type: 'line',
-                name: dataArr[1].name,
+                name:"广告时长",
                 smooth: true,
                 symbol: "none",
                 // symbol: 'circle',
@@ -240,7 +204,7 @@ onMounted(() => {
                         }
                     ])
                 },
-                data: dataArr[1].list.map(it => it.value)
+                data: ydata2
             }
         ]
     }

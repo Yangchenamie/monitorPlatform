@@ -13,26 +13,13 @@
                     <th>机器编号</th>
                     <th>订单额/元</th>
                 </tr>
-                <tr>
-                    <td>2023.01.01 12:30:05</td>
-                    <td>39380104</td>
-                    <td>234</td>
-                </tr>
-                <tr>
-                    <td>2023.01.01 14:30:05</td>
-                    <td>38806104</td>
-                    <td>345</td>
-                </tr>
-                <tr>
-                    <td>2023.01.02 12:30:05</td>
-                    <td>91806104</td>
-                    <td>456</td>
-                </tr>
-                <tr>
-                    <td>2023.01.02 15:30:05</td>
-                    <td>81806104</td>
-                    <td>432.5</td>
-                </tr>
+                <vue3-seamless-scroll hover-stop="true" :list="orderArr" hover="true" step="1" class="sroll">
+                    <tr v-for="(item, index) in orderArr" :key="index" class="rowup">
+                        <td>{{ item.gmtCreate }}1</td>
+                        <td>{{ item.orderNumber }}1</td>
+                        <td>{{ item.totalPrice }}</td>
+                    </tr>
+                </vue3-seamless-scroll>
             </table>
         </div>
     </div>
@@ -40,10 +27,54 @@
 
 
 <script setup lang="ts">
+import { onMounted, getCurrentInstance, ComponentInternalInstance, ref, reactive, computed } from 'vue';
+const { proxy } = getCurrentInstance() as ComponentInternalInstance
+
+const orderArr = reactive([]) as any[];
+
+
+
+async function getOrderList() {
+    await proxy?.$http({
+        url: "/shop/order/getAllM"
+    }).then(res => {
+        console.log('res', res);
+
+        res.data.data.list.forEach((element: any) => {
+            orderArr.push(element)
+        })
+    })
+}
+
+
+onMounted(async () => {
+    getOrderList()
+})
+
+
+
 
 </script>
 
 <style scoped lang="less">
+.sroll{
+    height: 250px;
+    overflow: hidden;
+}
+.scroll {
+    height: 270px;
+    width: 500px;
+    margin: 100px auto;
+    overflow: hidden;
+}
+
+.scroll .item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3px 0;
+}
+
 .container {
     width: 100%;
     min-width: 320px;
@@ -79,35 +110,68 @@
 
     .content {
         width: 100%;
+        overflow: hidden;
 
-        >table {
+        & table {
+            table-layout: fixed;
+            width: 95%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             border-collapse: collapse;
-            width: 90%;
+            // width: 90%;
+            box-sizing: border-box;
             // display: flex;
             // justify-content: space-between;
 
             th {
+
                 color: rgba(0, 218, 216, 1);
-                font-size: 18px;
-                text-align: left;
+                text-align: center;
                 font-weight: 400;
                 line-height: 60px;
-                margin: 0 30px;
-                padding-right: 20px;
-                flex:1;
+                // margin: 0 30px;
+                // padding-right: 20px;
+                // flex:1;
+                padding-left: 10px;
             }
 
             td {
-                text-align: left;
+
+                font-size: 10px;
+                text-align: center;
                 height: 38px;
-                padding-right: 18px;
+                // padding-right: 18px;
                 line-height: 38px;
                 padding-left: 10px;
                 border: none;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+
+            td:nth-child(1),
+            th:nth-child(1) {
+                // padding-left: 10px;
+                flex: 0.5;
+
+            }
+
+            td:nth-child(2),
+            th:nth-child(2) {
+                flex: 0.5;
+
+            }
+
+            td:last-child,
+            th:last-child {
+                flex: 0.3;
+
             }
 
             tr {
-                width: 100%;
+                display: flex;
+                // width: 100%;
             }
 
             tr:nth-child(even) {
@@ -119,4 +183,21 @@
 
 
 }
+
+// @keyframes rowup {
+//     0% {
+//         -webkit-transform: translate3d(0, 0, 0);
+//         transform: translate3d(0, 0, 0);
+//     }
+//     100% {
+//         -webkit-transform: translate3d(0, -307px, 0);
+//         transform: translate3d(0, -307px, 0);
+//         display: none;
+//     }
+// }
+// .rowup{
+//     -webkit-animation: 10s rowup linear infinite normal;
+//     animation: 10s rowup linear infinite normal;
+//     position: relative;
+// }
 </style>

@@ -3,14 +3,15 @@
   <!-- <Screen></Screen> -->
   <!-- <loginPage></loginPage> -->
   <!-- <HeaderLogin></HeaderLogin> -->
-  <!-- <router-view></router-view> -->
-  <ScreenPage></ScreenPage>
+  <router-view></router-view>
+  <!-- <ScreenPage></ScreenPage> -->
 </template>
 
 <script setup lang="ts">
 
 
 import router from './router';
+import loginPage from './view/loginPage.vue'
 import ScreenPage from './view/ScreenPage.vue';
 
 </script>

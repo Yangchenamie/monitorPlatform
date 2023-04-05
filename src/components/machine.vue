@@ -12,15 +12,15 @@
             </div>
             <div class="statistics">
                 <div>
-                    <p>5.88w </p>
+                    <p>{{ datas.countNum }} </p>
                     <span>装机总数</span>
                 </div>
                 <div>
-                    <p>+234</p>
+                    <p>+{{ datas.compareNum }}</p>
                     <span>较上一个月</span>
                 </div>
                 <div>
-                    <p>2%</p>
+                    <p>{{ datas.machineRate }}</p>
                     <span>装机率</span>
                 </div>
             </div>
@@ -31,31 +31,77 @@
 
 <script setup lang="ts">
 import * as echarts from 'echarts'
-import { onMounted } from 'vue';
+import { onMounted, getCurrentInstance, ComponentInternalInstance,reactive } from 'vue';
+const { proxy } = getCurrentInstance() as ComponentInternalInstance
+let datas  = reactive({
+    machineRate:'',
+    compareNum:'',
+    countNum:""
+});
+interface data {
+    name:string,
+    num:number
+}
+async function getData(){
+    const rate = await proxy?.$http({
+        url:"/driver/member/probability"
+    })
+    console.log(rate);
+    datas.machineRate = rate?.data.data.num
+    // console.log(machineRate);
 
-onMounted(() => {
+    const compare = await proxy?.$http({
+        url:"/driver/member/compare"
+    })
+    console.log(compare);
+    datas.compareNum = compare?.data.data.mum
+
+    const count = await proxy?.$http({
+        url:"/driver/member/count"
+    })
+    datas.countNum = count?.data.data.number
+}
+async function getMachineMap() {
+    const data = await proxy?.$http({
+        url:'/driver/member/months'
+    })
+    console.log('装机图',data);
+    const machineMap = data?.data.data.map
+    return machineMap;
+}
+
+onMounted(async() => {
+    getData()
+    const machineMap = await getMachineMap()
+    console.log('machineMap:',machineMap);
+    
+    let len :number = machineMap.tx.length
+    let arr:any[] = new Array()
+    for(let i=0;i<len;i++){
+        let data:data = {
+            name:machineMap.tx[i],
+            num:machineMap.ty[i]
+        }
+        arr.push(data)
+    }
+    console.log(arr);
+
+    
+
     const chart = echarts.init(document.querySelector('#machine') as HTMLElement)
 
-    let result = [
-        { name: '一月', ai: 2500 },
-        { name: '二月', ai: 5000 },
-        { name: '三月', ai: 2900 },
-        { name: '四月', ai: 2600 },
-        { name: '五月', ai: 3000 },
-        { name: '六月', ai: 7000 },
-        { name: '七月', ai: 7500 },
-        { name: '八月', ai: 2600 },
-        { name: '九月', ai: 3600 },
-        { name: '十月', ai: 6200 },
-        { name: '十一月', ai: 4300 },
-        { name: '十二月', ai: 7500 },
+    
 
-    ]
+
+    let result = arr
 
     let xData = result.map((item) => {
         return item.name
     })
-    let keys = ['ai'], seriesData = []
+    let keys = ['num']
+    console.log(keys);
+    
+    let seriesData: { name: string; data: any[] | { coords: any[][]; }[]; type: string; yAxisIndex?: number; symbol: string; symbolSize?: number; barWidth?: number; splitNumber?: number; smooth: boolean; itemStyle?: { color: string; }; lineStyle: { color: string; width: number; } | { normal: { color: string; width: number; opacity: number; curveness: number; }; }; areaStyle?: { opacity: number; color: { x: number; y: number; x2: number; y2: number; type: string; global: boolean; colorStops: { offset: number; color: string; }[]; }; shadowColor: string; shadowBlur: number; }; coordinateSystem?: string; zlevel?: number; polyline?: boolean; effect?: { show: boolean; trailLength: number; symbol: string; period: number; symbolSize: number; }; }[] = []
     let color = ['0, 254, 210', '0, 124, 250']
     keys.forEach((key, index) => {
         seriesData.push({

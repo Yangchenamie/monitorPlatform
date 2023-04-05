@@ -1,7 +1,7 @@
 <template>
     <div class="conInput">
-        <input type="text" placeholder="手机号">
-        <input type="text" placeholder="验证码">
+        <input type="text" placeholder="手机号" v-model="phoneCaptcha.phone">
+        <input type="text" placeholder="验证码" v-model="phoneCaptcha.captcha">
         <button class="getBtn">获取</button>
         <div class="conFoot">
             <div>
@@ -14,7 +14,20 @@
 </template>
 
 <script setup lang="ts">
+import { reactive,watch,defineEmits } from 'vue';
 
+
+const phoneCaptcha = reactive({
+    phone:'',
+    captcha:''
+})
+
+const emits = defineEmits(['getNamePwd'])
+
+watch(phoneCaptcha,()=>{
+    console.log(phoneCaptcha);
+    emits("getNamePwd",phoneCaptcha)
+})
 </script>
 
 <style scoped lang="less">

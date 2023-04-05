@@ -51,13 +51,6 @@
             background-color: rgba(0, 218, 216, 1);
             margin: 3px auto 16px;
         }
-
-        // .lozenge{
-        //     width: 2px;
-        //     height: 2px;
-        //     transform: rotate(-135deg);
-        //     background-color:grey;
-        // }
     }
 
 }

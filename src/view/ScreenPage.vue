@@ -105,13 +105,11 @@ body {
     min-width: 420px;
 
     .left-top {
-      // position: relative;
       height: 53%;
       margin-bottom: 40px;
     }
 
     .left-bottom {
-      // position: relative;
       height: 31%;
 
     }
@@ -124,14 +122,11 @@ body {
     margin: 0 20px;
 
     .center-top {
-      // position: relative;
       width: 100%;
       height: 56%;
-      // background-color: yellow;
     }
 
     .center-bottom {
-      // position: relative;
       margin-top: 25px;
       width: 100%;
       height: 28%;
@@ -143,15 +138,11 @@ body {
     height: 100%;
     width: 27%;
     min-width: 320px;
-
-    // margin-left: 0.5%;
     .right-top {
-      // position: relative;
       height: 46%;
     }
 
     .right-bottom {
-      // position: relative;
       height: 38%;
       margin-top: 25px;
       background-color: green;

@@ -7,56 +7,40 @@
 
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted , getCurrentInstance, ComponentInternalInstance} from 'vue';
 // import echarts from 'echarts'
 import * as echarts from 'echarts' //echarts 5 需要这样导入
 import '../../public/static/map/china'
+const { proxy } = getCurrentInstance() as ComponentInternalInstance
 
-onMounted(() => {
+interface dataInter {
+  name:string,
+  value:[number,number]
+ list:string
+}
+let mapData: any;
+onMounted(async() => {
   const chart = echarts.init(document.querySelector('#china') as HTMLElement)
-  // var data = [
-  //     {
-  //         name:"内蒙古",
-  //         itemStyle:{
-  //             areaColor:"rgba(0, 218, 216, 1)"
-  //         },
-  //         value:[110.3456,41.4889]
-  //     }
-  // ]
-  const data = [
-    {
-      name: "内蒙古",
-      value: [110.3467, 41.4899],
-      list: "司机用户：388"
-    },
-    {
-      name: "武汉",
-      value: [114.31, 30.52],
-      list: "司机用户：388"
-    }, {
-      name: "丹东",
-      value: [124.37, 40.13],
-      list: "司机用户：388"
-    }, {
-      name: "张家口",
-      value: [114.87, 40.82],
-      list: "司机用户：388"
-    }, {
-      name: "深圳",
-      value: [114.07, 22.62],
-      list: "司机用户：388"
-    },
-    {
-      name: "金华",
-      value: [119.64, 29.12],
-      list: "司机用户：388"
-    }, {
-      name: "西安",
-      value: [108.95, 34.27],
-      list: "司机用户：388"
-    }
-  ]
 
+  mapData =await getMapList();
+  console.log('mapData的值',mapData);
+  let len:number = mapData.length;
+  let arr:any[] = new Array();
+  console.log(arr);
+  
+  for(let i=0;i<len;i++){
+
+    let a:dataInter = {
+      name:mapData[i].name,
+      value:[mapData[i].location.x,mapData[i].location.y],
+      list:"司机用户："+mapData[i].number
+    }
+    arr.push(a)
+  }
+
+  
+  const data = arr
+    
   chart.setOption({
     geo: {
       map: "china",
@@ -203,9 +187,23 @@ onMounted(() => {
     ],
   });
   window.addEventListener('resize', function () {//执行
-        chart.resize();
-    })
+    chart.resize();
+  })
+ 
+  
+  
 })
+
+async function getMapList(){
+  const data = await proxy?.$http({
+    url:"/driver/NumberMap/get"
+  })
+  console.log('map数据：',data);
+const mapData = data?.data.data.list
+console.log(mapData.length);
+
+return mapData;
+}
 </script>
 
 <style scoped lang="less">
